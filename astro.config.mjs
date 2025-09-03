@@ -12,6 +12,6 @@ export default defineConfig({
   },
 
   site: 'https://sinta-blyukher.github.io',
-  base: '/sinta-blyukher.github.io'
+  base: '/sinta-blyukher.github.io',
   adapter: netlify(),
 });
