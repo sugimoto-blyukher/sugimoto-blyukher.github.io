@@ -11,12 +11,14 @@ import '../styles/global.css'
     <link rel="icon" type="image/jpg" href="/image.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta  name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark" />
+    <title>sinta</title>
 </head>
 
-<body>
+<body class="bg-gray-900 text-gray-100 antialiased">
     <Header />
-    <main class="bg-gray-800 py-40">
-        <div class="content">
+    <main class="py-16">
+        <div class="container mx-auto max-w-6xl px-4">
             <slot />
         </div>
     </main>

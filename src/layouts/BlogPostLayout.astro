@@ -7,8 +7,14 @@ const { frontmatter } = Astro.props;
 ---
 
 <BlogLayout pageTitle={frontmatter.title}>
-    <p class="publish-date">{frontmatter.pubDate.slice(0, 10)}</p>
-    <h2>{frontmatter.title}</h2>
-    <img class="article-image" src={frontmatter.image.url} alt={frontmatter.image.alt} />
-    <slot />
+    <article class="max-w-3xl mx-auto">
+        <p class="publish-date text-sm text-gray-400 text-center">{frontmatter.pubDate.slice(0, 10)}</p>
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-center mt-2 mb-6">{frontmatter.title}</h1>
+        {frontmatter?.image?.url && (
+            <img class="article-image rounded-lg mx-auto mb-8 max-h-80 object-cover" src={frontmatter.image.url} alt={frontmatter?.image?.alt || frontmatter.title} />
+        )}
+        <div class="space-y-6 leading-relaxed text-gray-200">
+            <slot />
+        </div>
+    </article>
 </BlogLayout>
