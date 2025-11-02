@@ -3,6 +3,15 @@ import Header from "../components/Header.astro"
 import Footer from "../components/Footer.astro"
 import '../styles/global.css'
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-90EQR2SENQ"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-90EQR2SENQ');
+</script>
 ---
 
 <html lang="ja">
@@ -13,15 +22,6 @@ import '../styles/global.css'
     <meta  name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark" />
     <title>sugimoto</title>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-90EQR2SENQ"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-90EQR2SENQ');
-    </script>
 </head>
 
 
