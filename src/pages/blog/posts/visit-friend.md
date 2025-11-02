@@ -6,7 +6,7 @@ description: "友人が家に来た"
 image:
     url: ""
     alt: "megane"
-pubDate: 2025-09-01
+pubDate: 2025-11-02
 tags: []
 ---
 #友人
