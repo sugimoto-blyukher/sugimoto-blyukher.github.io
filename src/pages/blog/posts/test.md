@@ -9,5 +9,5 @@ image:
 pubDate: 2025-09-01
 tags: ["astro", "seiko"]
 ---
-## Hello, My name is Sinta.
+## Hello, My name is sugimoto.
 ## This Blog will show and describe about technologies and my student life.
