@@ -8,6 +8,15 @@ on:
   push:
     branches: ["main"]
 
+  workflow_dispatch:
+
+
+  #Github上でアクションタブからこのworkflowを実行するの許可する
+  permissions:
+    contains: read
+    pages: write
+    id-token; write
+
 # Job1:build(ビルドジョブ)
 jobs:
   build:
@@ -15,32 +24,23 @@ jobs:
     # 他の選択肢：windows-latest, macos-latest
     runs-on: ubuntu-latest
     steps:
-      # 公式アクションを使用してリポジトリのコードを仮想環境にダウンロード 
+      # 公式アクションを使用してリポジトリのコードを仮想環境にダウンロード
       # @v4は使用するアクションのバージョン
+      - name: Checkout your repository using git
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          # Node.js version 20をインストール
-          # Astroは Node.js 18+ が必要なので、最新の安定版を使用
-          node-version: "20"
-      #  依存関係のインストール
-      - run: npm ci
-      #  Astroサイトのビルド
-        # package.jsonのscriptsセクションで定義されたbuildコマンドを実行
-        # Astroの場合、通常はastro buildが実行される
-      - run: npm run build
-      # ビルドで生成された./distフォルダをアーティファクトとして保存
-      # 次のジョブ（deploy）で使用するために一時保存
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+      - name: Install, build, and upload your site
+      - uses: withastro/action
+
 
   # Job2:deploy(デプロイジョブ)
   deploy:
     # このジョブはbuildジョブが成功した後に実行される
     needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # GitHub Pages専用の公式デプロイアクション
-      # 前のジョブでアップロードされたアーティファクトを自動で取得し、GitHub Pagesにデプロイ
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
