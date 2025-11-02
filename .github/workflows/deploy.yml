@@ -15,7 +15,7 @@ on:
   permissions:
     contains: read
     pages: write
-    id-token; write
+    id-token: write
 
 # Job1:build(ビルドジョブ)
 jobs:
