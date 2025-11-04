@@ -3,11 +3,18 @@ import '../styles/global.css'
 const {url, title, image, description} = Astro.props;
 ---
 
-<div class=" bg-blue-950">
-    <div class="grid grid-cols-3 grid-flow-row gap-4">
-        <img src={image.url} alt={image.alt} width="100"/>
-        <h2><a href={url}>{title}</a></h2>
-        <p>{description}</p>
+<article class="bg-gray-800/60 border border-white/10 rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+  <a class="block" href={url}>
+    <div class="flex gap-4 p-4 items-start">
+      {image?.url && (
+        <img class="w-28 h-28 object-cover rounded-md flex-none" src={image.url} alt={image?.alt || title} />
+      )}
+      <div class="min-w-0">
+        <h2 class="text-lg font-semibold mb-1 hover:text-pink-400">{title}</h2>
+        {description && (
+          <p class="text-sm text-gray-300 leading-relaxed">{description}</p>
+        )}
+      </div>
     </div>
-
-</div>
+  </a>
+</article>

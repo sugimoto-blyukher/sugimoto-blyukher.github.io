@@ -9,15 +9,17 @@ const pageTitle = "Blog"
 
 ---
 
-<BlogLayout pageTitle={pageTitle} class="grid grid-cols-1">
-    {
-        allPosts.map((post) => (
-                <BlogPost
-                        url={post.url}
-                        title={post.frontmatter.title}
-                        image={post.frontmatter.image}
-                        description={post.frontmatter.description}
-                />
-        ))
-    }
+<BlogLayout pageTitle={pageTitle}>
+    <div class="grid grid-cols-1 gap-6">
+        {
+            allPosts.map((post) => (
+                    <BlogPost
+                            url={post.url}
+                            title={post.frontmatter.title}
+                            image={post.frontmatter.image}
+                            description={post.frontmatter.description}
+                    />
+            ))
+        }
+    </div>
 </BlogLayout>

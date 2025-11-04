@@ -8,20 +8,24 @@ import '../styles/global.css'
 <html lang="ja">
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="../../public/image.jpg" />
-    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/image.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>blog</title>
+    <meta name="color-scheme" content="dark" />
+    <title>{Astro.props?.pageTitle ? `${Astro.props.pageTitle} | sugimoto` : 'Blog | sugimoto'}</title>
 </head>
-<body class="h-screen">
-<div class="root">
+
+
+
+<body class="bg-gray-900 text-gray-100 antialiased min-h-screen">
+  <div class="root flex min-h-screen flex-col">
     <Header />
-    <main class="bg-gray-800 py-100">
-        <div class="text-green-400">
+    <main class="flex-1 py-12">
+        <div class="container mx-auto max-w-4xl px-4">
             <slot />
         </div>
     </main>
     <Footer />
-</div>
+  </div>
 </body>
 </html>
