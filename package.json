@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "npx astro",
     "wrangler": "npx wrangler",
-    "pages:dev": "wrangler pages dev --compatibility-date=2024-06-03 -- astro dev",
+    "pages:dev": "wrangler pages dev --compatibility-date=2025-11-11 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist"
   },
 
