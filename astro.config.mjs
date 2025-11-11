@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import netlify from '@astrojs/netlify';
 
+import cloudflare from '@astrojs/cloudflare';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -13,5 +15,5 @@ export default defineConfig({
 
   site: 'https://sinta-blyukher.github.io',
   base: '/sinta-blyukher.github.io',
-  adapter: netlify(),
+  adapter: cloudflare(),
 });

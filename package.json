@@ -4,14 +4,23 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "start": "astro dev",
+    "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "npx astro",
+    "wrangler": "npx wrangler",
+    "pages:dev": "wrangler pages dev --compatibility-date=2024-01-17 -- astro dev",
+    "pages:deploy": "astro build && wrangler pages deploy ./dist"
   },
+
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.10",
     "@astrojs/netlify": "^6.5.9",
     "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.13.5",
     "tailwindcss": "^4.1.12"
+  },
+  "devDependencies": {
+    "wrangler": "^4.46.0"
   }
 }
