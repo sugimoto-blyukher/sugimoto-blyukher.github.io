@@ -15,7 +15,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  site: 'https://sinta-blyukher.github.io  ',
+  site: '/',
   base: '/',
   adapter: cloudflare(),
   integrations: [relativeLinks()],
