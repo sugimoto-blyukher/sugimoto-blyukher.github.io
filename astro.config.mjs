@@ -15,7 +15,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  site: '/',
+  site: 'sinta.fun/',
   base: '/',
   adapter: cloudflare(),
   integrations: [relativeLinks()],
