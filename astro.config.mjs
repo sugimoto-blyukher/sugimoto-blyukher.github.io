@@ -7,13 +7,16 @@ import netlify from '@astrojs/netlify';
 
 import cloudflare from '@astrojs/cloudflare';
 
+import relativeLinks from 'astro-relative-links';
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
 
-  site: 'https://sinta-blyukher.github.io',
-  base: '/sinta-blyukher.github.io',
+  site: 'https://sinta-blyukher.github.io  ',
+  base: '/',
   adapter: cloudflare(),
+  integrations: [relativeLinks()],
 });

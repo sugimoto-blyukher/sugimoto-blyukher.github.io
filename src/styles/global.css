@@ -1,1 +1,126 @@
 @import "tailwindcss";
+
+/* Neumorphism components (軽量ユーティリティ) */
+@layer base {
+  :root {
+    --page-bg-from: #f3f4f6; /* gray-100 */
+    --page-bg-to: #ffffff;
+    --page-text: #0f172a; /* slate-900 */
+    --header-bg: rgba(255, 255, 255, 0.75);
+    --header-border: rgba(15, 23, 42, 0.10); /* slate-900/10 */
+    --header-text: #0f172a; /* slate-900 */
+    --nav-hover-bg: rgba(255, 255, 255, 0.55);
+    --nav-active-bg: rgba(99, 102, 241, 0.15); /* indigo-500 tint */
+    --nav-active-text: #3730a3; /* indigo-800 */
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page-bg-from: #0f172a; /* slate-900 */
+      --page-bg-to: #111827;   /* gray-900 */
+      --page-text: #e5e7eb;    /* gray-200 */
+      --header-bg: rgba(17, 24, 39, 0.60); /* gray-900/60 */
+      --header-border: rgba(148, 163, 184, 0.20); /* slate-400/20 */
+      --header-text: #f3f4f6; /* gray-100 */
+      --nav-hover-bg: rgba(255, 255, 255, 0.08);
+      --nav-active-bg: rgba(79, 70, 229, 0.25); /* indigo-600 tint */
+      --nav-active-text: #c7d2fe; /* indigo-200 */
+    }
+  }
+
+  html, body { height: 100%; }
+  body {
+    color: var(--page-text);
+    background: linear-gradient(180deg, var(--page-bg-from), var(--page-bg-to));
+  }
+}
+
+@layer components {
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--header-bg);
+    color: var(--header-text);
+    border-bottom: 1px solid var(--header-border);
+    -webkit-backdrop-filter: saturate(180%) blur(8px);
+    backdrop-filter: saturate(180%) blur(8px);
+  }
+  .site-header a { color: inherit; }
+
+  .site-nav-list { align-items: center; }
+  .site-nav-list .nav-link {
+    display: inline-block;
+    padding: .5rem .75rem;
+    border-radius: .5rem;
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .site-nav-list .nav-link:hover { background: var(--nav-hover-bg); }
+  .site-nav-list .is-current > .nav-link {
+    background: var(--nav-active-bg);
+    color: var(--nav-active-text);
+    font-weight: 600;
+  }
+
+  :root {
+    --neu-bg: #e6e9f0;
+    --neu-shadow-dark: #c5c9d2;
+    --neu-shadow-light: #ffffff;
+    --neu-radius: 1rem;
+    --neu-distance: 8px;
+    --neu-blur: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --neu-bg: #1c1f24;
+      --neu-shadow-dark: #15171b;
+      --neu-shadow-light: #242830;
+    }
+  }
+
+  .neu-card {
+    background: var(--neu-bg);
+    border-radius: var(--neu-radius);
+    box-shadow:
+      var(--neu-distance) var(--neu-distance) var(--neu-blur) var(--neu-shadow-dark),
+      calc(-1 * var(--neu-distance)) calc(-1 * var(--neu-distance)) var(--neu-blur) var(--neu-shadow-light);
+  }
+
+  .neu-card.neu-inset {
+    box-shadow: inset var(--neu-distance) var(--neu-distance) var(--neu-blur) var(--neu-shadow-dark),
+      inset calc(-1 * var(--neu-distance)) calc(-1 * var(--neu-distance)) var(--neu-blur) var(--neu-shadow-light);
+  }
+
+  .neu-card:hover {
+    transition: box-shadow .2s ease;
+    box-shadow:
+      calc(var(--neu-distance) + 2px) calc(var(--neu-distance) + 2px) calc(var(--neu-blur) + 4px) var(--neu-shadow-dark),
+      calc(-1 * (var(--neu-distance) + 2px)) calc(-1 * (var(--neu-distance) + 2px)) calc(var(--neu-blur) + 4px) var(--neu-shadow-light);
+  }
+
+  /* ---------- Variants ---------- */
+  .neu--sm { --neu-distance: 6px; --neu-blur: 12px; }
+  .neu--lg { --neu-distance: 12px; --neu-blur: 24px; }
+  .neu--radius-sm { --neu-radius: 0.5rem; }
+  .neu--radius-lg { --neu-radius: 1.5rem; }
+
+  /* テーマ強制（要素単位での上書き） */
+  .neu-theme-light { --neu-bg: #e6e9f0; --neu-shadow-dark: #c5c9d2; --neu-shadow-light: #ffffff; }
+  .neu-theme-dark  { --neu-bg: #1c1f24; --neu-shadow-dark: #15171b; --neu-shadow-light: #242830; }
+
+  /* 押し込み操作（ボタン等） */
+  .neu-pressable { transition: box-shadow .2s ease, transform .06s ease; }
+  .neu-card.neu-pressable:active {
+    box-shadow: inset var(--neu-distance) var(--neu-distance) var(--neu-blur) var(--neu-shadow-dark),
+      inset calc(-1 * var(--neu-distance)) calc(-1 * var(--neu-distance)) var(--neu-blur) var(--neu-shadow-light);
+    transform: translateY(1px);
+  }
+
+  /* アクセシビリティ向けフォーカスリング */
+  .neu-ring:focus-visible {
+    outline: 2px solid #60a5fa; /* blue-400 */
+    outline-offset: 2px;
+  }
+}

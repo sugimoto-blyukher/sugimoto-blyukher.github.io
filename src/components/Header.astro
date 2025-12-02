@@ -1,30 +1,49 @@
 ---
 import '../styles/global.css'
+
+const links = [
+  { href: '/',        label: 'Home' },
+  { href: '/blog/',   label: 'Blog' },
+  { href: '/about/',  label: 'About' },
+  {href: '/info/', label: 'Info'}
+];
+
+const { pathname } = Astro.url;
+
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+};
+
 ---
 
-<header class="sticky top-0 z-50 bg-gray-900/95 border-b border-white/10 backdrop-blur">
-    <nav class="container mx-auto max-w-6xl flex items-center justify-between py-3 px-4">
-        <a href="/" class="logo text-xl md:text-2xl font-extrabold text-pink-400 tracking-tight">sugimoto</a>
-        <ul class="hidden md:flex items-center gap-6 nav-links">
-            <li><a href="/about" class="text-gray-200 hover:text-pink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded px-1 py-0.5">About</a></li>
-            <li><a href="/blog" class="text-gray-200 hover:text-pink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded px-1 py-0.5" target="_blank">Blog</a></li>
+  <header id="header" class="site-header border-b">
+    <div class="container mx-auto flex items-center justify-between p-4">
+      <a class="flex items-center gap-4" href="/index.html" aria-label="Home">
+        <img src="../../public/icon6.png" alt="サイトアイコン" class="h-12 w-12" />
+        <img src="../../public/sugimoto.png" alt="Sugimoto ロゴ" class="h-8" />
+      </a>
+
+      <nav class="nav" aria-label="メインナビゲーション">
+        <ul class="site-nav-list flex items-center gap-3 text-lg p-2">
+          {links.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class={
+              isActive(link.href)
+                ? 'text-sky-300 border-sky-400'
+                : 'text-slate-400 border-transparent hover:text-slate-100'
+                }
+                >
+                {link.label}
+              </a>
+            </li>
+          ))}
         </ul>
-        <!-- Mobile menu toggle -->
-        <button id="navToggle" aria-controls="navMenu" aria-expanded="false" class="md:hidden text-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-            <span class="sr-only">メニューを開閉</span>
-        </button>
-    </nav>
-    <!-- Mobile menu -->
-    <div id="navMenu" class="hidden md:hidden border-t border-white/10 bg-gray-900">
-        <ul class="flex flex-col gap-2 p-4">
-            <li><a href="/about" class="block text-gray-200 hover:text-pink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded px-2 py-2">About</a></li>
-            <li><a href="/blog" class="block text-gray-200 hover:text-pink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded px-2 py-2" target="_blank">Blog</a></li>
-        </ul>
+      </nav>
     </div>
-</header>
+  </header>
 
 <script is:inline>
   const btn = document.getElementById('navToggle');
@@ -43,3 +62,11 @@ import '../styles/global.css'
     });
   }
 </script>
+
+<style>
+  .nav-link--active {
+    color: #f9fafb;
+    border-bottom-color: #38bdf8; /* ハイライト色 */
+    font-weight: 600;
+  }
+</style>

@@ -12,13 +12,15 @@
     "pages:dev": "wrangler pages dev --compatibility-date=2025-11-11 -- astro dev",
     "pages:deploy": "astro build && wrangler pages deploy ./dist"
   },
-
   "dependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/cloudflare": "^12.6.10",
     "@astrojs/netlify": "^6.5.9",
     "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.13.5",
-    "tailwindcss": "^4.1.12"
+    "astro-relative-links": "^0.4.2",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "wrangler": "^4.46.0"
