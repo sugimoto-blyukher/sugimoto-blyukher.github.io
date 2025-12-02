@@ -16,7 +16,7 @@ export default defineConfig({
   },
 
   site: 'https://sinta.fun/',
-  base: 'https://sinta.fun/',
+  //base: 'https://sinta.fun/',
   adapter: cloudflare(),
   integrations: [relativeLinks()],
 });
