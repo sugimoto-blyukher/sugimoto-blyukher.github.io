@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && ./build.sh",
     "preview": "astro preview",
     "astro": "npx astro",
     "wrangler": "npx wrangler",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
-    "@astrojs/cloudflare": "^12.6.10",
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/netlify": "^6.5.9",
     "@tailwindcss/vite": "^4.1.12",
     "astro": "^5.13.5",
@@ -23,6 +23,6 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "wrangler": "^4.46.0"
+    "wrangler": "^4.52.1"
   }
 }

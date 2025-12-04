@@ -3,8 +3,6 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
-import netlify from '@astrojs/netlify';
-
 import cloudflare from '@astrojs/cloudflare';
 
 import relativeLinks from 'astro-relative-links';
