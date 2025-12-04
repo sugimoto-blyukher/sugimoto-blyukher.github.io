@@ -13,7 +13,7 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  site: 'https://sinta.fun/',
+  site: 'https://sinta.fun',
   //base: 'https://sinta.fun/',
   adapter: cloudflare(),
   integrations: [relativeLinks()],
