@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Seo from "../components/Seo.astro";
 import "../styles/global.css";
 ---
 
@@ -11,18 +12,7 @@ import "../styles/global.css";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark" />
-    <meta property="og:title" content="sugimoto" />
-    <meta property="og:description" content="我がサイト" />
-    <meta property="og:image" content="icon6.jpg" />
-    <meta property="og:site-name" content="sugimoto" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:site" content="@sug1m0t0_unk" />
-    <meta property="twitter:title" content="sugimoto" />
-    <meta property="twitter:description" content="我がサイト" />
-    <meta name="twitter:image" content="https://sinta.fun/icon6.png">
-
-    <!-- https://evoworx.dev/img/ogp.png -->
-
+    <Seo title="sugimoto" description="sugimoto のサイト" image="/og/site.png" />
     <title>sugimoto</title>
   </head>
 

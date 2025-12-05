@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/BlogLayout.astro";
+import { getBlogs, getBlogDetail } from "../../library/microcms.ts";
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import SidebarTaxonomy from "../../components/SidebarTaxonomy.astro";
+
+// 詳細記事ページの全パスを取得
+export async function getStaticPaths() {
+    const response = await getBlogs({ fields: ["id"] });
+    return response.contents.map((content: any) => ({
+        params: {
+            blogId: content.id,
+        },
+    }));
+}
+
+const { blogId } = Astro.params;
+const blog = await getBlogDetail(blogId as string, {
+  fields: ["id","title","content","eyecatch","tags","category","publishedAt"],
+});
+const published = blog.publishedAt
+  ? new Date(blog.publishedAt).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  : '';
+
+---
+
+<BlogLayout pageTitle={blog.title} ogImage={`/og/blog/${blog.id}.png`}>
+  <div class="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <article class="lg:col-span-2">
+      <header class="mb-8">
+        <a href="/blog/" class="text-sm text-gray-300 hover:text-white">← 記事一覧へ戻る</a>
+        <h1 class="mt-2 text-3xl md:text-4xl font-bold tracking-tight">{blog.title}</h1>
+        {published && (
+          <p class="mt-2 text-sm text-gray-400">公開日: {published}</p>
+        )}
+      </header>
+
+      {blog.eyecatch?.url && (
+        <div class="mb-8">
+          <img
+            src={blog.eyecatch.url}
+            alt={blog.title}
+            class="w-full rounded-xl border border-white/10"
+            width={blog.eyecatch.width}
+            height={blog.eyecatch.height}
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      <div class="article-content" set:html={blog.content}></div>
+    </article>
+
+    <div>
+      {
+        (() => {
+          const tags: string[] = [];
+          if (Array.isArray(blog.tags)) {
+            for (const t of blog.tags) {
+              const name = typeof t === 'string' ? t : (t && (t as any).name);
+              if (name) tags.push(name);
+            }
+          }
+          const catName = (typeof blog.category === 'string') ? blog.category : (blog.category as any)?.name;
+          const categories = catName ? [catName] : [];
+          return <SidebarTaxonomy tags={tags} categories={categories} />
+        })()
+      }
+    </div>
+  </div>
+</BlogLayout>

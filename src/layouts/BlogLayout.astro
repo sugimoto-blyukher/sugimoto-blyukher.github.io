@@ -1,8 +1,12 @@
 ---
 import Header from "../components/Header.astro"
 import Footer from "../components/Footer.astro"
+import Seo from "../components/Seo.astro"
 
 import '../styles/global.css'
+import { getBlogs } from "../library/microcms";
+const response = await getBlogs({ fields: ["id", "title" ]});
+
 ---
 
 <html lang="ja">
@@ -12,7 +16,17 @@ import '../styles/global.css'
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="dark" />
-    <title>{Astro.props?.pageTitle ? `${Astro.props.pageTitle} | sugimoto` : 'Blog | sugimoto'}</title>
+    {
+      (() => {
+        const title = Astro.props?.pageTitle ? `${Astro.props.pageTitle} | sugimoto` : 'Blog | sugimoto';
+        const ogImage = Astro.props?.ogImage || '/icon6.png';
+        const desc = Astro.props?.description || 'sugimoto のブログ';
+        return <>
+          <Seo title={title} description={desc} image={ogImage} />
+          <title>{title}</title>
+        </>
+      })()
+    }
 </head>
 
 
@@ -21,7 +35,7 @@ import '../styles/global.css'
   <div class="root flex min-h-screen flex-col">
     <Header />
     <main class="flex-1 py-12">
-        <div class="container mx-auto max-w-4xl px-4">
+        <div class="container mx-auto max-w-6xl px-4">
             <slot />
         </div>
     </main>

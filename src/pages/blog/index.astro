@@ -2,24 +2,119 @@
 import BlogLayout from "../../layouts/BlogLayout.astro";
 
 import BlogPost from "../../components/BlogPost.astro";
+import SidebarTaxonomy from "../../components/SidebarTaxonomy.astro";
+import { getBlogs } from "../../library/microcms";
 
-const allPosts = await Astro.glob("../blog/posts/*.md");
+const url = Astro.url;
+const pageParam = Number(url.searchParams.get('page') || '1');
+const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+const q = url.searchParams.get('q') || '';
+const limit = 9;
+const offset = (page - 1) * limit;
 
-const pageTitle = "Blog"
+const response = await getBlogs({
+  fields: ["id", "title", "eyecatch", "tags", "category"],
+  q: q ? q : undefined,
+  limit,
+  offset,
+});
+
+const total = response.totalCount ?? response.contents?.length ?? 0;
+const pageCount = Math.max(1, Math.ceil(total / limit));
+
+const pageTitle = "Blog";
+const buildPageUrl = (p: number) => {
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (p > 1) params.set('page', String(p));
+  const s = params.toString();
+  return s ? `?${s}` : '';
+};
 
 ---
 
-<BlogLayout pageTitle={pageTitle}>
-    <div class="grid grid-cols-1 gap-6">
+
+
+<BlogLayout pageTitle={pageTitle} ogImage="/og/blog/index.png">
+  <section class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">スギモトスキープラウダ</h1>
+  </section>
+
+  <section class="mb-8">
+    <form method="get" class="flex items-center gap-3">
+      <input
+        type="search"
+        name="q"
+        placeholder="記事を検索..."
+        value={q}
+        class="w-full rounded-lg bg-black/20 border border-white/10 px-4 py-2 outline-none focus:border-indigo-400"
+        aria-label="記事検索"
+      />
+      <button class="rounded-lg px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white" type="submit">検索</button>
+    </form>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <ul class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {
-            allPosts.map((post) => (
-                    <BlogPost
-                            url={post.url}
-                            title={post.frontmatter.title}
-                            image={post.frontmatter.image}
-                            description={post.frontmatter.description}
-                    />
-            ))
+          response.contents.map((content: any) => (
+            <li>
+              <BlogPost
+                url={content.id}
+                title={content.title}
+                image={content.eyecatch}
+              />
+            </li>
+          ))
         }
+      </ul>
     </div>
+
+    <div>
+      {
+        (() => {
+          const tags: string[] = [];
+          const categories: string[] = [];
+          for (const c of response.contents) {
+            if (Array.isArray(c.tags)) {
+              for (const t of c.tags) {
+                const name = typeof t === 'string' ? t : (t && (t as any).name);
+                if (name) tags.push(name);
+              }
+            }
+            const cat = (typeof c.category === 'string') ? c.category : (c.category as any)?.name;
+            if (cat) categories.push(cat);
+          }
+          return <SidebarTaxonomy tags={tags} categories={categories} />
+        })()
+      }
+    </div>
+  </section>
+
+  <nav class="mt-10 flex items-center justify-between" aria-label="ページネーション">
+    <a
+      href={page > 1 ? buildPageUrl(page - 1) : '#'}
+      aria-disabled={page <= 1}
+      class={page <= 1
+        ? 'pointer-events-none opacity-40 rounded-md border border-white/10 px-3 py-2'
+        : 'rounded-md border border-white/10 px-3 py-2 hover:border-indigo-400'}
+    >
+      ← 前へ
+    </a>
+
+    <p class="text-sm text-gray-300">
+      {page} / {pageCount}
+    </p>
+
+    <a
+      href={page < pageCount ? buildPageUrl(page + 1) : '#'}
+      aria-disabled={page >= pageCount}
+      class={page >= pageCount
+        ? 'pointer-events-none opacity-40 rounded-md border border-white/10 px-3 py-2'
+        : 'rounded-md border border-white/10 px-3 py-2 hover:border-indigo-400'}
+    >
+      次へ →
+    </a>
+  </nav>
 </BlogLayout>

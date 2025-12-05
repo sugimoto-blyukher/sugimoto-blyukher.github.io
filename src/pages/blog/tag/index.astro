@@ -1,0 +1,45 @@
+---
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { getBlogs } from "../../../library/microcms";
+
+// Collect all tags across posts (up to 300 posts)
+const pageSize = 100;
+let offset = 0;
+let all: any[] = [];
+for (let i = 0; i < 3; i++) {
+  const res = await getBlogs({ limit: pageSize, offset, fields: ["tags"] });
+  all = all.concat(res.contents);
+  offset += pageSize;
+  if (offset >= (res.totalCount ?? 0)) break;
+}
+const tagsSet = new Set<string>();
+for (const c of all) {
+  if (Array.isArray((c as any).tags)) {
+    for (const t of (c as any).tags) {
+      const name = typeof t === 'string' ? t : (t && (t as any).name);
+      if (name) tagsSet.add(String(name));
+    }
+  }
+}
+const tags = Array.from(tagsSet).sort((a, b) => a.localeCompare(b));
+const pageTitle = "タグ一覧";
+---
+
+<BlogLayout pageTitle={pageTitle} ogImage="/og/tag/index.png">
+  <section class="mb-8">
+    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">タグ一覧</h1>
+    <p class="mt-2 text-gray-300">すべてのタグを表示します。</p>
+  </section>
+
+  <section>
+    <ul class="flex flex-wrap gap-3">
+      {tags.map((t) => (
+        <li>
+          <a href={`/blog/tag/${encodeURIComponent(t)}/`} class="inline-block rounded-full bg-black/30 border border-white/10 px-4 py-2 text-sm text-gray-200 hover:border-indigo-400 hover:text-white">
+            #{t}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BlogLayout>

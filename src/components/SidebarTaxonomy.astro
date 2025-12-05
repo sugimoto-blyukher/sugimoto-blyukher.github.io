@@ -1,0 +1,45 @@
+---
+import '../styles/global.css'
+const { tags = [], categories = [] } = Astro.props as {
+  tags?: Array<string>;
+  categories?: Array<string>;
+};
+
+const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
+const tagList = uniq(tags);
+const categoryList = uniq(categories);
+const toTag = (v: string) => `/blog/tag/${encodeURIComponent(v)}/`;
+const toCategory = (v: string) => `/blog/category/${encodeURIComponent(v)}/`;
+---
+
+<aside class="space-y-6">
+  {categoryList.length > 0 && (
+    <section class="bg-gray-800/50 border border-white/10 rounded-xl p-4">
+      <h2 class="text-sm font-semibold text-gray-200 mb-3">カテゴリ</h2>
+      <ul class="flex flex-wrap gap-2">
+        {categoryList.map((c) => (
+          <li>
+            <a href={toCategory(c)} class="inline-block rounded-full bg-black/30 border border-white/10 px-3 py-1 text-sm text-gray-200 hover:border-indigo-400 hover:text-white">
+              {c}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {tagList.length > 0 && (
+    <section class="bg-gray-800/50 border border-white/10 rounded-xl p-4">
+      <h2 class="text-sm font-semibold text-gray-200 mb-3">タグ</h2>
+      <ul class="flex flex-wrap gap-2">
+        {tagList.map((t) => (
+          <li>
+            <a href={toTag(t)} class="inline-block rounded-full bg-black/30 border border-white/10 px-3 py-1 text-sm text-gray-200 hover:border-indigo-400 hover:text-white">
+              #{t}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</aside>

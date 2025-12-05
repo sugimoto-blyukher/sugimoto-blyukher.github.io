@@ -1,0 +1,43 @@
+---
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { getBlogs } from "../../../library/microcms";
+
+// Collect all categories across posts (up to 300 posts)
+const pageSize = 100;
+let offset = 0;
+let all: any[] = [];
+for (let i = 0; i < 3; i++) {
+  const res = await getBlogs({ limit: pageSize, offset, fields: ["category"] });
+  all = all.concat(res.contents);
+  offset += pageSize;
+  if (offset >= (res.totalCount ?? 0)) break;
+}
+const categoriesSet = new Set<string>();
+for (const c of all) {
+  const name = (typeof (c as any).category === 'string')
+    ? (c as any).category
+    : (c as any).category?.name;
+  if (name) categoriesSet.add(String(name));
+}
+const categories = Array.from(categoriesSet).sort((a, b) => a.localeCompare(b));
+const pageTitle = "カテゴリ一覧";
+---
+
+<BlogLayout pageTitle={pageTitle} ogImage="/og/category/index.png">
+  <section class="mb-8">
+    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">カテゴリ一覧</h1>
+    <p class="mt-2 text-gray-300">すべてのカテゴリを表示します。</p>
+  </section>
+
+  <section>
+    <ul class="flex flex-wrap gap-3">
+      {categories.map((c) => (
+        <li>
+          <a href={`/blog/category/${encodeURIComponent(c)}/`} class="inline-block rounded-full bg-black/30 border border-white/10 px-4 py-2 text-sm text-gray-200 hover:border-indigo-400 hover:text-white">
+            {c}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BlogLayout>

@@ -9,8 +9,10 @@ const {url, title, image, description} = Astro.props;
       {image?.url && (
         <img class="w-28 h-28 object-cover rounded-md flex-none" src={image.url} alt={image?.alt || title} />
       )}
-      <div class="min-w-0">
-        <h2 class="text-lg font-semibold mb-1 hover:text-pink-400">{title}</h2>
+      <div class="min-w-0 flex-1">
+        <h2 class="text-xl md:text-2xl font-bold leading-snug tracking-tight text-white clamp-2 break-words hyphens-auto hover:text-pink-300">
+          {title}
+        </h2>
         {description && (
           <p class="text-sm text-gray-300 leading-relaxed">{description}</p>
         )}

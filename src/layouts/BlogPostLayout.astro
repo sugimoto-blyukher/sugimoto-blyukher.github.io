@@ -3,18 +3,21 @@ import BlogLayout from "../layouts/BlogLayout.astro";
 
 
 import '../styles/global.css'
-const { frontmatter } = Astro.props;
+import { getBlogs } from "../library/microcms";
+const response = await getBlogs({ fields: ["id", "title"]});
+
 ---
 
-<BlogLayout pageTitle={frontmatter.title}>
+<BlogLayout pageTitle={pageTitle}>
     <article class="max-w-3xl mx-auto">
-        <p class="publish-date text-sm text-gray-400 text-center">{frontmatter.pubDate.slice(0, 10)}</p>
-        <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-center mt-2 mb-6">{frontmatter.title}</h1>
-        {frontmatter?.image?.url && (
-            <img class="article-image rounded-lg mx-auto mb-8 max-h-80 object-cover" src={frontmatter.image.url} alt={frontmatter?.image?.alt || frontmatter.title} />
-        )}
-        <div class="space-y-6 leading-relaxed text-gray-200">
-            <slot />
-        </div>
+        <ul>
+            {
+                response.contents.map((content: any) => (
+                        <li>
+                            <a href={content.id}>{content.title}</a>
+                        </li>
+                ))
+            }
+        </ul>
     </article>
 </BlogLayout>

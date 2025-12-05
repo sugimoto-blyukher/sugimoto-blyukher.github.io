@@ -1,0 +1,117 @@
+---
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import BlogPost from "../../../components/BlogPost.astro";
+import SidebarTaxonomy from "../../../components/SidebarTaxonomy.astro";
+import { getBlogs } from "../../../library/microcms";
+
+export async function getStaticPaths() {
+  // できる限り多くのタグページを生成（上限100件 x 3ページ = 300件想定）
+  const pageSize = 100;
+  let offset = 0;
+  let all: any[] = [];
+  // 最大3回分を安全に取得（必要に応じて調整）
+  for (let i = 0; i < 3; i++) {
+    const res = await getBlogs({ limit: pageSize, offset, fields: ["tags"] });
+    all = all.concat(res.contents);
+    offset += pageSize;
+    if (offset >= (res.totalCount ?? 0)) break;
+  }
+  const tags = new Set<string>();
+  for (const c of all) {
+    if (Array.isArray(c.tags)) {
+      for (const t of c.tags) {
+        const name = typeof t === 'string' ? t : (t && (t as any).name);
+        if (name) tags.add(String(name));
+      }
+    }
+  }
+  return Array.from(tags).map((t) => ({ params: { tag: t } }));
+}
+
+const { tag } = Astro.params as { tag: string };
+const url = Astro.url;
+const pageParam = Number(url.searchParams.get('page') || '1');
+const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+const limit = 9;
+const offset = (page - 1) * limit;
+
+// Try microCMS filters by tag name, then fallback to q search
+const filter = `tags[contains]${tag}`;
+let response = await getBlogs({
+  fields: ["id","title","eyecatch","tags","category"],
+  filters: filter,
+  limit,
+  offset,
+});
+
+if (!response.totalCount || response.totalCount === 0) {
+  response = await getBlogs({
+    fields: ["id","title","eyecatch","tags","category"],
+    q: tag,
+    limit,
+    offset,
+  });
+}
+
+const total = response.totalCount ?? response.contents?.length ?? 0;
+const pageCount = Math.max(1, Math.ceil(total / limit));
+
+// Build taxonomy lists from all posts (up to 100)
+const all = await getBlogs({ limit: 100, fields: ["tags","category"] });
+const tags: string[] = [];
+const categories: string[] = [];
+for (const c of all.contents) {
+  if (Array.isArray((c as any).tags)) {
+    for (const t of (c as any).tags) {
+      const name = typeof t === 'string' ? t : (t && (t as any).name);
+      if (name) tags.push(name);
+    }
+  }
+  const cat = (typeof (c as any).category === 'string') ? (c as any).category : (c as any).category?.name;
+  if (cat) categories.push(cat);
+}
+
+const uniq = (arr: string[]) => Array.from(new Set(arr.filter(Boolean)));
+const pageTitle = `タグ: ${tag}`;
+const buildPageUrl = (p: number) => {
+  const params = new URLSearchParams();
+  if (p > 1) params.set('page', String(p));
+  const s = params.toString();
+  return s ? `?${s}` : '';
+};
+---
+
+<BlogLayout pageTitle={pageTitle} ogImage={`/og/tag/${encodeURIComponent(tag)}.png`}>
+  <section class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold tracking-tight">タグ: {tag}</h1>
+    <p class="mt-2 text-gray-300">該当する記事を表示しています。</p>
+  </section>
+
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <ul class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        {response.contents.map((content: any) => (
+          <li>
+            <BlogPost url={content.id} title={content.title} image={content.eyecatch} />
+          </li>
+        ))}
+      </ul>
+
+      <nav class="mt-10 flex items-center justify-between" aria-label="ページネーション">
+        <a href={page > 1 ? buildPageUrl(page - 1) : '#'} aria-disabled={page <= 1}
+          class={page <= 1 ? 'pointer-events-none opacity-40 rounded-md border border-white/10 px-3 py-2' : 'rounded-md border border-white/10 px-3 py-2 hover:border-indigo-400'}>
+          ← 前へ
+        </a>
+        <p class="text-sm text-gray-300">{page} / {pageCount}</p>
+        <a href={page < pageCount ? buildPageUrl(page + 1) : '#'} aria-disabled={page >= pageCount}
+          class={page >= pageCount ? 'pointer-events-none opacity-40 rounded-md border border-white/10 px-3 py-2' : 'rounded-md border border-white/10 px-3 py-2 hover:border-indigo-400'}>
+          次へ →
+        </a>
+      </nav>
+    </div>
+
+    <div>
+      <SidebarTaxonomy tags={uniq(tags)} categories={uniq(categories)} />
+    </div>
+  </section>
+</BlogLayout>
