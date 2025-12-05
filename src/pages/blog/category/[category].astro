@@ -32,7 +32,7 @@ const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 const limit = 9;
 const offset = (page - 1) * limit;
 
-// Try to filter by category name; fallback to q search
+// Filter posts by category name
 const filter = `category[contains]${category}`;
 let response = await getBlogs({
   fields: ["id","title","eyecatch","tags","category"],
@@ -40,15 +40,6 @@ let response = await getBlogs({
   limit,
   offset,
 });
-
-if (!response.totalCount || response.totalCount === 0) {
-  response = await getBlogs({
-    fields: ["id","title","eyecatch","tags","category"],
-    q: category,
-    limit,
-    offset,
-  });
-}
 
 const total = response.totalCount ?? response.contents?.length ?? 0;
 const pageCount = Math.max(1, Math.ceil(total / limit));
@@ -78,7 +69,7 @@ const buildPageUrl = (p: number) => {
 };
 ---
 
-<BlogLayout pageTitle={pageTitle} ogImage={`/og/category/${encodeURIComponent(category)}.png`}>
+<BlogLayout pageTitle={pageTitle}>
   <section class="mb-10">
     <h1 class="text-3xl md:text-4xl font-bold tracking-tight">カテゴリ: {category}</h1>
     <p class="mt-2 text-gray-300">該当する記事を表示しています。</p>

@@ -35,7 +35,7 @@ const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 const limit = 9;
 const offset = (page - 1) * limit;
 
-// Try microCMS filters by tag name, then fallback to q search
+// Filter posts by tag name
 const filter = `tags[contains]${tag}`;
 let response = await getBlogs({
   fields: ["id","title","eyecatch","tags","category"],
@@ -43,15 +43,6 @@ let response = await getBlogs({
   limit,
   offset,
 });
-
-if (!response.totalCount || response.totalCount === 0) {
-  response = await getBlogs({
-    fields: ["id","title","eyecatch","tags","category"],
-    q: tag,
-    limit,
-    offset,
-  });
-}
 
 const total = response.totalCount ?? response.contents?.length ?? 0;
 const pageCount = Math.max(1, Math.ceil(total / limit));
@@ -81,7 +72,7 @@ const buildPageUrl = (p: number) => {
 };
 ---
 
-<BlogLayout pageTitle={pageTitle} ogImage={`/og/tag/${encodeURIComponent(tag)}.png`}>
+<BlogLayout pageTitle={pageTitle}>
   <section class="mb-10">
     <h1 class="text-3xl md:text-4xl font-bold tracking-tight">タグ: {tag}</h1>
     <p class="mt-2 text-gray-300">該当する記事を表示しています。</p>

@@ -8,13 +8,11 @@ import { getBlogs } from "../../library/microcms";
 const url = Astro.url;
 const pageParam = Number(url.searchParams.get('page') || '1');
 const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
-const q = url.searchParams.get('q') || '';
 const limit = 9;
 const offset = (page - 1) * limit;
 
 const response = await getBlogs({
   fields: ["id", "title", "eyecatch", "tags", "category"],
-  q: q ? q : undefined,
   limit,
   offset,
 });
@@ -25,7 +23,6 @@ const pageCount = Math.max(1, Math.ceil(total / limit));
 const pageTitle = "Blog";
 const buildPageUrl = (p: number) => {
   const params = new URLSearchParams();
-  if (q) params.set('q', q);
   if (p > 1) params.set('page', String(p));
   const s = params.toString();
   return s ? `?${s}` : '';
@@ -35,24 +32,12 @@ const buildPageUrl = (p: number) => {
 
 
 
-<BlogLayout pageTitle={pageTitle} ogImage="/og/blog/index.png">
+<BlogLayout pageTitle={pageTitle}>
   <section class="mb-10">
     <h1 class="text-3xl md:text-4xl font-bold tracking-tight">スギモトスキープラウダ</h1>
   </section>
 
-  <section class="mb-8">
-    <form method="get" class="flex items-center gap-3">
-      <input
-        type="search"
-        name="q"
-        placeholder="記事を検索..."
-        value={q}
-        class="w-full rounded-lg bg-black/20 border border-white/10 px-4 py-2 outline-none focus:border-indigo-400"
-        aria-label="記事検索"
-      />
-      <button class="rounded-lg px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white" type="submit">検索</button>
-    </form>
-  </section>
+  
 
   <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2">
