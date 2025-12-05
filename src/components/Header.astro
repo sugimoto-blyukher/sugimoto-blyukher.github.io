@@ -24,15 +24,18 @@ const isActive = (href: string) => {
       <a class="flex items-center gap-4" href="/index.html" aria-label="Home">
         {
           () => {
-            if (currentPageUrl != "/") {
+            if (currentPageUrl == "/blog/") {
               return (<img src="../icon6.png" alt="サイトアイコン" class="h-12 w-12" /> 
                 <img src="../sugimoto.png" alt="Sugimoto ロゴ" class="h-8" />
               )
-            } else {
-              return (<img src="icon6.png" alt="サイトアイコン" class="h-12 w-12" />
-                <img src="sugimoto.png" alt="Sugimoto ロゴ" class="h-8" />
+            } else if(currentPageUrl != "/")) {
+              return (<img src="../icon6.png" alt="サイトアイコン" class="h-12 w-12" />
+                <img src="../sugimoto.png" alt="Sugimoto ロゴ" class="h-8" />
               )
-            }
+            } else {
+                  return (<img src="icon6.png" alt="サイトアイコン" class="h-12 w-12" />
+                          <img src="sugimoto.png" alt="Sugimoto ロゴ" class="h-8" />
+                  )
           }
         }
       </a>
