@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/Default.astro";
+import MisskeyNotes from "../components/MisskeyNotes.astro";
 //window.alert("Loaded");
 const WAKA_API_BASE =
   import.meta.env.PUBLIC_WAKA_API_BASE ??
@@ -53,6 +54,18 @@ const WAKA_API_BASE =
           GitHub
         </a>
       </div>
+      <details class="mt-6 border-t border-[var(--page-border)] pt-4">
+        <summary class="cursor-pointer text-lg font-semibold neu-ring">
+          Notes / 最近のつぶやき
+        </summary>
+        <div class="mt-5 space-y-4">
+          <p class="text-sm text-gray-400">
+            Misskey の公開投稿を新しい順に最大10件表示します。
+            <a href="/notes/">Notes ページを開く →</a>
+          </p>
+          <MisskeyNotes />
+        </div>
+      </details>
     </section>
 
     <!-- Timeline -->

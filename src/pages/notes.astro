@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/Default.astro';
+import MisskeyNotes from '../components/MisskeyNotes.astro';
+---
+
+<BaseLayout>
+  <main class="mx-auto max-w-4xl p-6 md:p-10 space-y-8">
+    <header class="space-y-2">
+      <h1 class="text-3xl md:text-4xl font-semibold typewriter">Notes / つぶやき</h1>
+      <p class="text-sm text-gray-400">Misskey の公開投稿を新しい順に最大10件表示します。</p>
+    </header>
+    <MisskeyNotes />
+  </main>
+</BaseLayout>

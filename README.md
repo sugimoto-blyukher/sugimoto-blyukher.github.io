@@ -31,3 +31,9 @@
 ### Notes
 - Blog posts are managed as Markdown files in `src/pages/blog/posts/`. Each post should have frontmatter with `title`, `image`, `tags`, `pubDate`, and optionally `category` and `description`.
 - The site uses Astro's static output, which can be deployed directly to GitHub Pages or Cloudflare Workers Static Assets.
+
+### Misskey notes
+- `/notes/` loads up to 100 notes in the browser and displays the latest 10 public original posts (excluding replies and Renotes/quotes).
+- Configure the instance, user ID, and profile link in `src/config/misskey.ts`. The public API must allow cross-origin requests; no token or backend is used.
+- Images are lazy-loaded. CW content is collapsed, and sensitive images are fetched only after the visitor reveals them. MFM is shown as plain text.
+- Updates happen on page load or with the reload button. Failed updates preserve the current list; nothing is stored persistently.

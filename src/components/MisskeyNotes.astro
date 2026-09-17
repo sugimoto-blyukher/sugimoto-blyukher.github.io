@@ -1,0 +1,153 @@
+---
+import { misskey } from '../config/misskey';
+---
+
+<section data-misskey-notes class="notes-panel space-y-5" aria-label="Misskey の投稿">
+  <div class="notes-toolbar">
+    <a href={misskey.profileUrl}>{misskey.account}</a>
+    <button type="button" class="neu-card neu-ring px-4 py-2" data-reload hidden>再読み込み</button>
+  </div>
+  <p data-status role="status" aria-live="polite" class="text-sm text-gray-400"></p>
+  <noscript><p>投稿一覧を表示するには JavaScript を有効にしてください。上のリンクからプロフィールを開けます。</p></noscript>
+  <ol data-notes class="space-y-5" aria-label="最近の投稿"></ol>
+</section>
+
+<script>
+  import { fetchNotes, noteUrl, type Note } from '../utils/misskey';
+
+  const dateFormat = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo', dateStyle: 'medium', timeStyle: 'short',
+  });
+
+  function link(url: string, text: string) {
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.textContent = text;
+    return anchor;
+  }
+
+  function renderNote(note: Note) {
+    const row = document.createElement('li');
+    row.className = 'note neu-card p-5 md:p-6 space-y-4';
+    const article = document.createElement('article');
+    article.className = 'space-y-4';
+    const time = document.createElement('time');
+    time.dateTime = note.createdAt;
+    time.textContent = `${dateFormat.format(new Date(note.createdAt))} JST`;
+    const permalink = link(noteUrl(note.id), '');
+    permalink.append(time);
+    article.append(permalink);
+    const content = document.createElement('div');
+    content.className = 'space-y-4';
+    if (note.text !== null) {
+      const text = document.createElement('p');
+      text.className = 'note-text';
+      text.textContent = note.text;
+      content.append(text);
+    }
+    const images: { image: HTMLImageElement; url: string; revealed: boolean }[] = [];
+    let cwDetails: HTMLDetailsElement | undefined;
+    const loadImages = () => {
+      for (const entry of images) {
+        if (entry.revealed && (!cwDetails || cwDetails.open) && !entry.image.hasAttribute('src')) {
+          entry.image.src = entry.url;
+        }
+      }
+    };
+    for (const file of note.files) {
+      if (!file.type.startsWith('image/') || !file.url) {
+        content.append(link(noteUrl(note.id), '添付ファイルを元投稿で確認'));
+        continue;
+      }
+      const figure = document.createElement('figure');
+      figure.className = 'space-y-2';
+      const image = document.createElement('img');
+      image.alt = file.comment || '投稿の添付画像';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      image.referrerPolicy = 'no-referrer';
+      image.hidden = file.isSensitive;
+      const entry = { image, url: file.url, revealed: !file.isSensitive };
+      images.push(entry);
+      if (file.isSensitive) {
+        const reveal = document.createElement('button');
+        reveal.type = 'button';
+        reveal.className = 'neu-card neu-ring px-4 py-2';
+        reveal.textContent = 'センシティブ画像を表示';
+        reveal.setAttribute('aria-expanded', 'false');
+        reveal.addEventListener('click', () => {
+          entry.revealed = !entry.revealed;
+          image.hidden = !entry.revealed;
+          reveal.textContent = entry.revealed ? 'センシティブ画像を隠す' : 'センシティブ画像を表示';
+          reveal.setAttribute('aria-expanded', String(entry.revealed));
+          loadImages();
+        });
+        figure.append(reveal);
+      }
+      image.addEventListener('error', () => {
+        image.hidden = true;
+        figure.append(link(noteUrl(note.id), '画像を読み込めませんでした。元投稿で確認'));
+      }, { once: true });
+      figure.append(image);
+      content.append(figure);
+    }
+    if (note.cw !== null) {
+      cwDetails = document.createElement('details');
+      cwDetails.className = 'space-y-4';
+      const summary = document.createElement('summary');
+      summary.textContent = note.cw || '内容の注意書き — 投稿を表示';
+      cwDetails.append(summary, content);
+      cwDetails.addEventListener('toggle', loadImages);
+      article.append(cwDetails);
+    } else {
+      article.append(content);
+    }
+    loadImages();
+    article.append(link(noteUrl(note.id), '元投稿を開く →'));
+    row.append(article);
+    return row;
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-misskey-notes]')) {
+    const reload = root.querySelector<HTMLButtonElement>('[data-reload]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const list = root.querySelector<HTMLOListElement>('[data-notes]')!;
+    let loading = false;
+    let loaded = false;
+    async function refresh() {
+      if (loading) return;
+      loading = true;
+      reload.disabled = true;
+      list.setAttribute('aria-busy', 'true');
+      status.textContent = '$ 投稿を読み込み中…';
+      try {
+        const notes = await fetchNotes();
+        const rows = notes.map(renderNote);
+        list.replaceChildren(...rows);
+        loaded = true;
+        status.textContent = notes.length ? `$ ${notes.length}件の投稿を表示しています。` : '$ 表示対象の公開投稿はありません。';
+      } catch {
+        status.textContent = loaded
+          ? '$ 更新できませんでした。前回の表示を維持しています。「再読み込み」で再試行してください。'
+          : '$ 投稿を取得できませんでした。「再読み込み」で再試行するか、プロフィールを開いてください。';
+      } finally {
+        loading = false;
+        reload.disabled = false;
+        list.setAttribute('aria-busy', 'false');
+      }
+    }
+    reload.hidden = false;
+    reload.addEventListener('click', () => void refresh());
+    void refresh();
+  }
+</script>
+
+<style is:global>
+  .notes-panel .notes-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; justify-content: space-between; }
+  .notes-panel a, .notes-panel .note-text, .notes-panel summary { overflow-wrap: anywhere; }
+  .notes-panel .note-text { white-space: pre-wrap; line-height: 1.8; }
+  .notes-panel img { max-width: 100%; height: auto; max-height: 36rem; object-fit: contain; border: 1px solid var(--page-border); }
+  .notes-panel summary, .notes-panel button { cursor: pointer; }
+  .notes-panel button:disabled { cursor: wait; opacity: 0.6; }
+  .notes-panel summary:focus-visible, .notes-panel a:focus-visible { outline: 2px solid var(--page-accent); outline-offset: 4px; }
+</style>
