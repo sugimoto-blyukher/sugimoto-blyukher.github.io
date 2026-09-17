@@ -6,6 +6,7 @@ const links = [
   { href: "/#about", label: "About" },
   { href: "/#works", label: "Works" },
   { href: "/blog/", label: "Blog" },
+  { href: "/notes/", label: "Notes" },
   { href: "/links/", label: "Links" },
 ];
 
@@ -42,7 +43,7 @@ const isActive = (href: string) => {
         aria-label="メインナビゲーション"
       >
         <ul
-          class="site-nav-list flex flex-col items-start gap-3 p-3 text-lg md:flex-row md:items-center md:p-2"
+          class="site-nav-list flex flex-col items-start gap-3 p-3 text-lg md:flex-row md:items-center md:p-2 md:gap-1 md:text-sm lg:gap-3 lg:text-lg"
         >
           {
             links.map((link) => (
